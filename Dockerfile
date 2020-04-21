@@ -15,7 +15,7 @@ RUN apt update \
  && apt autoremove
 
 WORKDIR /root
-RUN git clone --depth=1 https://github.com/llvm/llvm-project.git
+RUN git clone --depth=1 --branch llvmorg-10.0.0 https://github.com/llvm/llvm-project.git
 RUN mkdir build \
  && cd build \
  && cmake -G Ninja -DCMAKE_BUILD_TYPE=Release \

@@ -1,32 +1,14 @@
-FROM ubuntu as clang-builder
+FROM ubuntu as clang-downloader
 MAINTAINER Jerome Forissier <jerome@forissier.org>
 
-ENV DEBIAN_FRONTEND=noninteractive
-RUN apt update \
- && apt install -y \
-  cmake \
-  gcc \
-  g++ \
-  git \
-  make \
-  ninja-build \
-  python3 \
-  vim \
- && apt autoremove
+RUN apt update && \
+    apt install -y wget xz-utils
 
+ADD get_clang.sh /root/get_clang.sh
 WORKDIR /root
-RUN git clone --depth=1 --branch llvmorg-10.0.0 https://github.com/llvm/llvm-project.git
-RUN mkdir build \
- && cd build \
- && cmake -G Ninja -DCMAKE_BUILD_TYPE=Release \
-  -DLLVM_ENABLE_PROJECTS="clang;lld" \
-  -DLLVM_TARGETS_TO_BUILD="AArch64;ARM" \
-  /root/llvm-project/llvm \
- && ninja \
- && DESTDIR=/tmp/clang-install ninja install
+RUN ./get_clang.sh ./clang
 
 FROM jforissier/optee_os_ci
 MAINTAINER Jerome Forissier <jerome@forissier.org>
-
-COPY --from=clang-builder /tmp/clang-install/usr/local/ /usr/local/
+COPY --from=clang-downloader /root/clang/ /usr/local/
 

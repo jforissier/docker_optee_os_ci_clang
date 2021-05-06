@@ -6,7 +6,7 @@ RUN apt update && \
 
 ADD get_clang.sh /root/get_clang.sh
 WORKDIR /root
-RUN ./get_clang.sh ./clang
+RUN ./get_clang.sh 12.0.0 ./clang
 
 FROM jforissier/optee_os_ci
 MAINTAINER Jerome Forissier <jerome@forissier.org>
